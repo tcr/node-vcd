@@ -1,6 +1,6 @@
 {
   "name": "vcd",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Parses VCD dumps from Logic Analyzers, EDA logic simulation tools, etc.",
   "main": "index.js",
   "repository": "tessel/vcd",

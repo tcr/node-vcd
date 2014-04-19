@@ -50,9 +50,10 @@ function vcdStream (opts) {
     vars: {}
   };
 
-  // ignore hash
+  // options
+  opts = opts || {}
   var ignore = {};
-  if (opts && opts.ignore) {
+  if (opts.ignore) {
     opts.ignore.forEach(function (k) {
       ignore[k] = true;
     })
@@ -65,7 +66,7 @@ function vcdStream (opts) {
     tokenStart: function (token) {
       if (token == '$dumpvars') {
         // go through options
-        if (opts && opts.rename) {
+        if (opts.rename) {
           for (var k in this.state.vars) {
             if (this.state.vars[k].name in opts.rename) {
               this.state.vars[k].name = opts.rename[this.state.vars[k].name]
@@ -135,7 +136,7 @@ function vcdStream (opts) {
       }
       if (token.match(/^#/)) {
         var index = parseInt(token.substr(1));
-        if (!this.curvar || this.curvar.index != index) {
+        if (!this.curvar || (!opts.combineSamples || this.curvar.index != index)) {
           endSample();
           this.curvar = { index: index, changes: {} };
         }

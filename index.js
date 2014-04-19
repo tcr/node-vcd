@@ -24,7 +24,9 @@ function state (initial, props) {
 function augment (a, b)
 {
   for (var k in b) {
-    a[k] = b[k];
+    if (b[k] !== null) {
+      a[k] = b[k];
+    }
   }
   return a;
 }
@@ -59,9 +61,13 @@ function vcdStream (opts) {
     })
   }
 
+  var s_index = -1;
+  var s_changes = {}, s_changes_tmp = null;
+  var s_lastSample = {};
+
   var fsm = state('tokenStart', {
     state: stream.state,
-    lastSample: {},
+    s_pending: false,
 
     tokenStart: function (token) {
       if (token == '$dumpvars') {
@@ -73,9 +79,16 @@ function vcdStream (opts) {
             }
           }
         }
+
+        // initialize singleton values
+        for (var k in this.state.vars) {
+          s_lastSample[this.state.vars[k].name] = 0;
+          s_changes[this.state.vars[k].name] = null;
+        }
+
         stream.emit('begin', this.state);
 
-        this.curvar = null;
+        this.s_pending = false;
         return this.goto('dumpvarContent');
       } else if (token) {
         this.curvar = [token.substr(1)];
@@ -107,50 +120,36 @@ function vcdStream (opts) {
     },
 
     dumpvarContent: function (token) {
-      var endSample = (function () {
-        if (!this.curvar) return;
-
-        if (true) {
-          var sample = { index: this.curvar.index, changes: {} };
-          // convert ids to names
-          for (var k in this.state.vars) {
-            if (k in this.curvar.changes && !(this.state.vars[k].name in ignore)) {
-              sample.changes[this.state.vars[k].name] = this.curvar.changes[k];
-            }
-          }
-        } else {
-          var sample = this.curvar;
-        }
-
-        stream.emit('sample', sample.index, sample.changes, this.lastSample);
-        stream.push(JSON.stringify(sample));
-        augment(this.lastSample, sample.changes);
-      }).bind(this);
-
       if (token == '$dumpoff') { // spurious?
         return;
       }
+
+      if ((token == '$end' || token[0] == '#') && this.s_pending) {
+        stream.emit('sample', s_index, s_changes, s_lastSample);
+        augment(s_lastSample, s_changes);
+        this.s_pending = false;
+      }
+
       if (token == '$end') {
-        endSample();
         return this.goto('tokenStart');
       }
-      if (token.match(/^#/)) {
+      if (token[0] == '#') {
         var index = parseInt(token.substr(1));
-        if (!this.curvar || (!opts.combineSamples || this.curvar.index != index)) {
-          endSample();
-          this.curvar = { index: index, changes: {} };
+        this.s_pending = true;
+        s_index = index;
+        for (var k in s_changes) {
+          s_changes[k] = null;
         }
-      } else if (token.match(/^[01]/)) {
-        this.curvar.changes[token.substr(1, 2)] = parseInt(token.substr(0, 1));
-      } else if (token.match(/^[b]/)) {
-        this.curvar.changes[''] = parseInt(token.substr(1), 2);
+      } else if (token[0] == '0' || token[0] == '1') {
+        s_changes[this.state.vars[token.substr(1, 2)].name] = parseInt(token.substr(0, 1));
+      } else if (token[0] == 'b') {
+        s_changes_tmp = parseInt(token.substr(1), 2);
         this.goto('binaryId');
       }
     },
 
     binaryId: function (token) {
-      this.curvar.changes[token] = this.curvar.changes[''];
-      delete this.curvar.changes[''];
+      s_changes[this.state.vars[token].name] = s_changes_tmp;
       this.goto('dumpvarContent');
     }
   });

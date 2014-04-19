@@ -33,7 +33,6 @@ Creates a stream that parses a value-changed dump stream. The following options 
 
 - **rename** — Map of var names to renamed var names.
 - **ignore** — Var names to ignore in sample output.
-- **combineSamples** — Combine samples with the same timestamp into a single sample. (default `false`)
 
 <!--/markdocs-->
 

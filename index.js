@@ -52,7 +52,7 @@ function vcdStream (opts) {
 
   // ignore hash
   var ignore = {};
-  if (opts.ignore) {
+  if (opts && opts.ignore) {
     opts.ignore.forEach(function (k) {
       ignore[k] = true;
     })
@@ -65,7 +65,7 @@ function vcdStream (opts) {
     tokenStart: function (token) {
       if (token == '$dumpvars') {
         // go through options
-        if (opts.rename) {
+        if (opts && opts.rename) {
           for (var k in this.state.vars) {
             if (this.state.vars[k].name in opts.rename) {
               this.state.vars[k].name = opts.rename[this.state.vars[k].name]

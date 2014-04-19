@@ -1,0 +1,4 @@
+vcd.createStream([opts])
+Creates a stream that parses a value-changed dump stream. The following options are possible:
+- **rename** — Map of var names to renamed var names.
+- **ignore** — Var names to ignore in sample output.

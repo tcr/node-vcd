@@ -1,0 +1,16 @@
+{
+  "name": "vcd",
+  "version": "0.0.0",
+  "description": "For dumps from Logic Analyzers, EDA logic simulation tools, etc.",
+  "main": "index.js",
+  "dependencies": {
+    "split": "~0.3.0",
+    "carrier": "~0.1.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -31,7 +31,7 @@ fs.createReadStream('./file.vcd')
 &#x20;<a href="#api-vcd-createStream-opts" name="api-vcd-createStream-opts">#</a> vcd<b>.createStream</b>( [opts] )  
 Creates a stream that parses a value-changed dump stream. The following options are possible:
 
-&#x20;<a href="#api-rename-Map-of-var-names-to-renamed-var-names" name="api-rename-Map-of-var-names-to-renamed-var-names">#</a> - **rename** — Map of var names to renamed var names.  
+- **rename** — Map of var names to renamed var names.
 - **ignore** — Var names to ignore in sample output.
 
 <!--/markdocs-->

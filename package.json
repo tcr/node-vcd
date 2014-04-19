@@ -1,16 +1,16 @@
 {
   "name": "vcd",
-  "version": "0.0.0",
-  "description": "For dumps from Logic Analyzers, EDA logic simulation tools, etc.",
+  "version": "0.0.1",
+  "description": "Parses VCD dumps from Logic Analyzers, EDA logic simulation tools, etc.",
   "main": "index.js",
+  "repository": "tessel/vcd",
   "dependencies": {
-    "split": "~0.3.0",
-    "carrier": "~0.1.13"
+    "split": "~0.3.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }
